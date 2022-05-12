@@ -1,0 +1,11 @@
+{% set data =  hostvars | get_log_data %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>应用日志巡检报告</title>
+</head>
+<body>
+{{ data }}
+</body>
+</html>

@@ -1,0 +1,37 @@
+---
+# author: dingtong
+
+- name: Get log check data.
+  script: check_log.sh
+  register: check_result  # register: check_linux.sh 命令执行的结果返回给 check_result, 通过变量{{ item }}调用
+
+- block:  # block 模块: 将多个任务组合成一个块，并且可以对这个块做条件判断，以及当块里面的任务失败时，进行失败处理。
+  - name: Generate report file.
+    template:
+      src: log-report.html
+      dest: "{{ check_report_path | d('/tmp') }}/log-check-report{{ check_report_file_suffix | d('') }}.html"
+
+  - name: Get report file content.
+    slurp:  # slurp 模块用于拉取远端文件的 base64 码
+      src: "{{ check_report_path | d('/tmp') }}/log-check-report{{ check_report_file_suffix | d('') }}.html"
+    register: report_data
+
+  - name: Send a report by email.
+    mail:
+      host: "{{ check_mail_host }}"
+      port: "{{ check_mail_port }}"
+      username: "{{ check_mail_username }}"
+      password: "{{ check_mail_password }}"
+      from: "{{ check_mail_username }}"
+      to: "{{ check_mail_to }}"
+      subject: "{{ check_mail_subject }}"
+      body: "{{ report_data['content'] | b64decode }}"
+      subtype: html
+    when: # when表示只在符合when条件的host上执行task
+    - check_mail_host != ""
+    - check_mail_port != ""
+    - check_mail_username != ""
+    - check_mail_password != ""
+    - check_mail_to | length > 0
+  run_once: true  # run_once表示只在当前host group中第一个可用host上执行task
+  connection: local # 在配置管理的节点上执行，不会在远程主机执行
