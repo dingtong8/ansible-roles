@@ -1,0 +1,28 @@
+---
+# author: lework
+
+- name: configure | Setup kibana configuration file.
+  template:
+    src: kibana.yml.j2
+    dest: "{{ kibana_conf_path }}/kibana.yml"
+    backup: yes
+  notify: restart kibana
+  when:
+    - kibana_conf is defined
+    - kibana_conf != ""
+
+- name: configure | Copy kibana configuration file.
+  copy:
+    src: "{{ kibana_conf_file }}"
+    dest: "{{ kibana_conf_path }}/kibana.yml"
+    backup: yes
+  notify: restart kibana
+  when:
+    - kibana_conf_file is defined
+    - kibana_conf_file != ""
+   
+- name: configure | Manage kibana services.
+  service:
+    name: kibana
+    state: "{{ kibana_service_status }}"
+    enabled: "{{ kibana_service_enabled }}"

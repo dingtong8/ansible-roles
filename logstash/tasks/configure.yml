@@ -1,0 +1,71 @@
+---
+# author: lework
+
+- name: configure | Setup logstash configuration file.
+  template:
+    src: logstash.yml.j2
+    dest: "{{ logstash_conf_path }}/logstash.yml"
+    backup: yes
+  notify: restart logstash
+  when:
+    - logstash_conf is defined
+    - logstash_conf != ""
+
+- name: configure | Copy logstash configuration file.
+  copy:
+    src: "{{ logstash_conf_file }}"
+    dest: "{{ logstash_conf_path }}/logstash.yml"
+    backup: yes
+  notify: restart logstash
+  when:
+    - logstash_conf_file is defined
+    - logstash_conf_file != ""
+    
+- name: configure | Configure logstash pipeline config.
+  copy:
+    content: |
+      {{ logstash_pipeline_conf | to_nice_yaml(indent=2) }}
+    dest: "{{ logstash_conf_path }}/pipelines.yml"
+    backup: yes
+  notify: restart logstash
+  when:
+    - logstash_pipeline_conf is defined
+
+- name: configure | Configure logstash pipeline.
+  copy:
+    content: |
+      {{ item.conf }}
+    dest: "{{ logstash_conf_path }}/conf.d/{{ item.name }}.conf"
+    backup: yes
+  notify: restart logstash
+  loop: "{{ logstash_pipeline }}"
+  when:
+    - logstash_pipeline is defined
+    - logstash_pipeline | length > 0
+    
+- name: configure | Copy logstash pipeline file.
+  copy:
+    src: "{{ item }}"
+    dest: "{{ logstash_conf_path }}/conf.d/"
+    backup: yes
+  notify: restart logstash
+  loop: "{{ logstash_pipeline_file }}"
+  when:
+    - logstash_pipeline_file is defined
+    - logstash_pipeline_file | length > 0
+
+- name: configure | Set jvm options.
+  lineinfile: 
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+    path: "/etc/logstash/jvm.options"
+  loop:
+    - {'regexp': '^-Xms*','line': "-Xms{{ logstash_jvm_heapsize }}" }
+    - {'regexp': '^-Xmx*','line': "-Xmx{{ logstash_jvm_heapsize }}" }
+  notify: restart logstash
+   
+- name: configure | Manage logstash services.
+  service:
+    name: logstash
+    state: "{{ logstash_service_status }}"
+    enabled: "{{ logstash_service_enabled }}"

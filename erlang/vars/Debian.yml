@@ -1,0 +1,15 @@
+---
+# author: lework
+
+__package:
+  - gcc
+  - make
+  - openssl
+  - libssl-dev
+  - libncurses5-dev
+  - libncursesw5-dev
+  - libwxgtk3.0-dev
+  
+
+__repo: erlang-solutions.list
+__repo_dest: /etc/apt/sources.list.d/

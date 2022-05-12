@@ -1,0 +1,43 @@
+
+broker.id={{ kafka_broker_id | d("0")}}
+broker.rack={{ kafka_broker_rack }}
+
+
+listeners={{ kafka_listeners }}
+advertised.listeners={{ kafka_advertised_listeners }}
+
+compression.type=producer
+
+auto.create.topics.enable=false
+unclean.leader.election.enable=false
+controlled.shutdown.enable=true
+delete.topic.enable=true
+
+group.initial.rebalance.delay.ms=3000
+group.max.session.timeout.ms=900000
+
+default.replication.factor=1
+offsets.topic.replication.factor=3
+
+num.partitions=1
+num.io.threads=8
+num.network.threads=6
+num.recovery.threads.per.data.dir=4
+
+replica.fetch.max.bytes=104857600
+message.max.bytes=104857600
+
+socket.receive.buffer.bytes=102400
+socket.request.max.bytes=104857600
+socket.send.buffer.bytes=102400
+
+log.segment.bytes=67108864
+log.segment.delete.delay.ms=1000
+log.retention.hours=72
+log.retention.check.interval.ms=60000
+log.dirs={{ kafka_data_path }}
+
+zookeeper.connect={{ kafka_zookeeper_hosts }}
+zookeeper.connection.timeout.ms=6000
+
+{{ kafka_config_extra | d() }}

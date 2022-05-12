@@ -1,0 +1,36 @@
+---
+# author: lework
+
+software_files_path: "/opt/software"
+software_install_path: "/usr/local"
+
+logstash_version: "7.8.1"
+
+logstash_service_status: started
+logstash_service_enabled: yes
+
+logstash_repo_install: true
+
+logstash_conf_path: /etc/logstash/
+
+logstash_conf:
+  pipeline.ordered: auto
+  http.enabled: true
+  http.host: 0.0.0.0
+  http.port: 9600-9700
+  path.data: /var/lib/logstash
+  path.logs: /var/log/logstash
+
+logstash_conf_file: ""
+
+logstash_pipeline_conf:
+   - pipeline.id: main
+     path.config: "/etc/logstash/conf.d/*.conf"  
+
+logstash_pipeline: []
+logstash_pipeline_file: []
+
+logstash_jvm_heapsize: "1g"
+
+logstash_plugin: []
+logstash_plugin_file: []

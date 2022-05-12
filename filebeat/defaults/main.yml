@@ -1,0 +1,42 @@
+---
+# author: lework
+
+software_files_path: "/opt/software"
+software_install_path: "/usr/local"
+
+filebeat_version: "7.8.1"
+
+filebeat_service_status: started
+filebeat_service_enabled: yes
+
+filebeat_repo_install: true
+
+filebeat_conf_path: /etc/filebeat/
+
+filebeat_conf:
+  filebeat.config.modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+  setup.template.settings:
+    index.number_of_shards: 0
+    index.codec: best_compression
+  fields:
+    env: staging
+  output.elasticsearch:
+    hosts:  ["localhost:9200"]
+  http.enabled: false
+  http.host: 0.0.0.0
+  http.port: 5066
+  
+filebeat_conf_file: ""
+
+filebeat_module_conf:
+  - name: system
+    conf:
+      - module: system
+        syslog:
+          enabled: true
+        auth:
+          enabled: true
+
+filebeat_setup: false

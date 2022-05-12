@@ -1,0 +1,116 @@
+#!/bin/bash
+
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# 
+# ZooKeeper
+# 
+# chkconfig: 2345 89 9 
+# description: zookeeper
+
+# Source function library.
+if [ -f /etc/init.d/functions ]; then
+  . /etc/init.d/functions
+elif [ -f /etc/rc.d/init.d/functions ] ; then
+  . /etc/rc.d/init.d/functions
+else
+  exit 0
+fi
+
+export ZOO_LOG_DIR={{ zookeeper_log_path }}
+export ZK_SERVER_HEAP={{ zookeeper_server_heap }}
+export ZK_CLIENT_HEAP={{ zookeeper_client_heap }}
+{% if zookeeper_jmx_enabled %}
+export JMXDISABLE=false
+export JMXPORT={{ zookeeper_jmx_port }}
+export JMXLOCALONLY={{ zookeeper_jmx_local_only }}
+export JMXAUTH={{ zookeeper_jmx_auth }}
+export JMXSSL={{ zookeeper_jmx_ssl }}
+export JMXLOG4J={{ zookeeper_jmx_log_disable }}
+{% endif %}
+{% if zookeeper_jvm_opts != "" %}
+export JVMFLAGS={{ zookeeper_jvm_opts }}
+{% endif %}
+
+RETVAL=0
+USER="{{ zookeeper_user }}"
+CONF="{{ zookeeper_conf_path }}/zoo.cfg"
+PIDFILE="{{ zookeeper_data_path }}/zookeeper_server.pid"
+LOCKFILE="/var/lock/subsys/{{ zookeeper_service_name }}"
+DAEMON="{{ zookeeper_home }}/bin/zkServer.sh"
+desc="ZooKeeper daemon"
+
+start() {
+  echo -n $"Starting $desc (zookeeper): "
+  daemon --user $USER $DAEMON start $CONF
+  RETVAL=$?
+  echo
+  [ $RETVAL -eq 0 ] && touch $LOCKFILE
+  return $RETVAL
+}
+
+stop() {
+  echo -n $"Stopping $desc (zookeeper): "
+  daemon --user $USER $DAEMON stop $CONF
+  RETVAL=$?
+  sleep 5
+  echo
+  [ $RETVAL -eq 0 ] && rm -f $LOCKFILE $PIDFILE
+}
+
+restart() {
+  stop
+  start
+}
+
+sstatus(){
+  $DAEMON status $CONF
+}
+
+checkstatus(){
+  status -p $PIDFILE "$desc"
+  RETVAL=$?
+}
+
+condrestart(){
+  [ -e "$LOCKFILE" ] && restart || :
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  status)
+    checkstatus
+    ;;
+  sstatus)
+    sstatus
+    ;;
+  restart)
+    restart
+    ;;
+  condrestart)
+    condrestart
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|status|sstatus|restart|condrestart}"
+    exit 1
+esac
+
+exit $RETVAL

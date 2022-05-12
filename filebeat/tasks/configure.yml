@@ -1,0 +1,45 @@
+---
+# author: lework
+
+- name: configure | Setup filebeat configuration file.
+  template:
+    src: filebeat.yml.j2
+    dest: "{{ filebeat_conf_path }}/filebeat.yml"
+    mode: 0644
+    backup: yes
+  notify: restart filebeat
+  when:
+    - filebeat_conf is defined
+    - filebeat_conf != ""
+
+- name: configure | Copy filebeat configuration file.
+  copy:
+    src: "{{ filebeat_conf_file }}"
+    dest: "{{ filebeat_conf_path }}/filebeat.yml"
+    backup: yes
+  notify: restart filebeat
+  when:
+    - filebeat_conf_file is defined
+    - filebeat_conf_file != ""
+    
+- name: configure | Configure filebeat modules.
+  copy:
+    content: |
+      {{ item.conf | to_nice_yaml(indent=2) }}
+    dest: "{{ filebeat_conf_path }}/modules.d/{{ item.name }}.yml"
+    backup: yes
+  notify: restart filebeat
+  loop: "{{ filebeat_module_conf }}"
+  when:
+    - filebeat_module_conf is defined
+    - filebeat_module_conf != ""
+
+- name: configure | Setup Elasticsearch index template and pipelines.
+  shell: filebeat setup
+  when: filebeat_setup | bool
+
+- name: configure | Manage filebeat services.
+  service:
+    name: filebeat
+    state: "{{ filebeat_service_status }}"
+    enabled: "{{ filebeat_service_enabled }}"

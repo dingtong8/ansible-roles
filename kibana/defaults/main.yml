@@ -1,0 +1,24 @@
+---
+# author: lework
+
+software_files_path: "/opt/software"
+software_install_path: "/usr/local"
+
+kibana_version: "7.8.1"
+
+kibana_service_status: started
+kibana_service_enabled: yes
+
+kibana_repo_install: true
+
+kibana_conf_path: /etc/kibana/
+
+kibana_conf:
+  server.port: 5601
+  server.host: "0.0.0.0"
+  elasticsearch.hosts: ["http://localhost:9200"]
+
+kibana_conf_file: ""
+
+kibana_plugin: []
+kibana_plugin_file: []

@@ -1,0 +1,62 @@
+---
+# author: lework
+
+software_files_path: "/opt/software"
+software_install_path: "/usr/local"
+
+elasticsearch_version: "7.8.1"
+
+elasticsearch_service_status: started
+elasticsearch_service_enabled: yes
+
+elasticsearch_repo_install: true
+
+
+elasticsearch_data_paths:
+  - "/var/lib/elasticsearch"
+elasticsearch_log_path: "/var/log/elasticsearch"
+elasticsearch_heap_dump_path: "/var/lib/elasticsearch"
+elasticsearch_conf_path: "/etc/elasticsearch"
+elasticsearch_systemd_config_file: "/etc/systemd/system/elasticsearch.service.d/override.conf"
+
+
+elasticsearch_conf: []
+elasticsearch_conf_file: ""
+elasticsearch_log4j2_file: ""
+
+elasticsearch_plugin: []
+elasticsearch_plugin_file: []
+
+elasticsearch_user: elasticsearch
+elasticsearch_group: elasticsearch
+
+elasticsearch_http_host: "0.0.0.0"
+elasticsearch_http_port: 9200
+
+elasticsearch_max_open_files: 655350
+elasticsearch_max_map_count: 262144
+
+elasticsearch_cluster_name: ""
+elasticsearch_node_name: ""
+
+elasticsearch_scripts_fileglob: ""
+elasticsearch_install_plugins: []
+
+elasticsearch_heap_size: "1g"
+elasticsearch_java_home: ""
+
+# xpack
+elasticsearch_xpack_enable: false
+elasticsearch_ssl_cert_generate: false
+elasticsearch_enable_http_ssl: false
+elasticsearch_enable_transport_ssl: false
+elasticsearch_ssl_certificate_path: "{{ elasticsearch_conf_path }}/certs"
+elasticsearch_ssl_keystore: "{% if elasticsearch_ssl_cert_generate %}elasticsearch_cert_files/{{ ansible_hostname }}.p12{% endif %}"
+elasticsearch_ssl_keystore_password: ""
+elasticsearch_ssl_truststore: "{% if elasticsearch_ssl_cert_generate %}elasticsearch_cert_files/{{ ansible_hostname }}.p12{% endif %}"
+elasticsearch_ssl_truststore_password: ""
+elasticsearch_ssl_key: ""
+elasticsearch_ssl_key_password: ""
+elasticsearch_ssl_certificate: ""
+elasticsearch_ssl_certificate_authority: ""
+elasticsearch_ssl_verification_mode: "full"

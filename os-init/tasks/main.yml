@@ -1,0 +1,35 @@
+---
+# author: lework
+
+- name: Include OS-specific variables.
+  include_vars: "{{ ansible_os_family }}.yml"
+  tags:
+   - always
+
+
+- import_tasks: 1.shutdown.yml
+  tags:
+    - shutdown
+- import_tasks: 2.optimization.yml
+  tags:
+    - optimization
+- import_tasks: 3.env.yml
+  tags:
+    - env
+- import_tasks: 4.enable.yml
+  tags:
+    - enable
+- import_tasks: 5.setting.yml
+  tags:
+    - setting
+- import_tasks: 6.upgrade.yml
+  tags:
+    - upgrade
+
+- name: reboot system
+  shell: "sleep 5;reboot"
+  async: 10
+  poll: 0
+  ignore_errors: yes
+  tags:
+    - reboot

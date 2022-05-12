@@ -1,0 +1,12 @@
+---
+# author: lework
+
+- import_tasks: 1.install.yml
+- import_tasks: 2.tls.yml
+  when: 
+    - consul_tls_enable | bool
+- import_tasks: 3.configure.yml
+- import_tasks: 4.acl.yml
+  when:
+    - consul_acl_enable | bool
+    - consul_server | bool

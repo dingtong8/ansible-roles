@@ -1,0 +1,131 @@
+---
+# author: lework
+
+- name: configure | Create Configuration Directory.
+  become: yes
+  file:
+    path: "{{ elasticsearch_conf_path }}"
+    state: directory
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: "2750"
+
+- name: configure | Create Others Directories.
+  become: yes
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    mode: "2750"
+  with_items:
+    - "{{ elasticsearch_log_path }}"
+    - "{{ elasticsearch_data_paths }}"
+
+- name: configure | Setup elasticsearch jvm options.
+  template:
+    src: jvm.options.j2
+    dest: "{{ elasticsearch_conf_path }}/jvm.options"
+    backup: yes
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: "660"
+  notify: restart elasticsearch
+
+- name: configure | Copy Default File.
+  become: yes
+  template:
+    src: "elasticsearch.j2"
+    dest: "{{ __elasticsearch_default_file }}"
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: "660"
+    force: yes
+    backup: yes
+  notify: restart elasticsearch
+
+- name: configure | Setup elasticsearch configuration file.
+  template:
+    src: elasticsearch.yml.j2
+    dest: "{{ elasticsearch_conf_path }}/elasticsearch.yml"
+    backup: yes
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: "660"
+  notify: restart elasticsearch
+
+- name: configure | Copy elasticsearch configuration file.
+  copy:
+    src: "{{ elasticsearch_conf_file }}"
+    dest: "{{ elasticsearch_conf_path }}/elasticsearch.yml"
+    backup: yes
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: "660"
+  notify: restart elasticsearch
+  when:
+    - elasticsearch_conf_file is defined
+    - elasticsearch_conf_file != ""
+
+- name: configure | Copy elasticsearch log4j2.properties file.
+  copy:
+    src: "{{ elasticsearch_log4j2_file }}"
+    dest: "{{ elasticsearch_conf_path }}/log4j2.properties"
+    backup: yes
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: "660"
+  notify: restart elasticsearch
+  when:
+    - elasticsearch_log4j2_file is defined
+    - elasticsearch_log4j2_file != ""
+
+- name: configure | Make sure systemd config dir exists.
+  file:
+    path: "{{ elasticsearch_systemd_config_file | dirname }}"
+    state: directory
+    mode: "755"
+
+- name: configure | Copy specific ElasticSearch Systemd config file.
+  template:
+    src: "override.conf.j2"
+    dest: "{{ elasticsearch_systemd_config_file }}"
+    owner: root
+    group: "{{ elasticsearch_group }}"
+    mode: "644"
+    force: yes
+  notify:
+   - restart elasticsearch
+
+- name: configure | Reload systemd configuration.
+  become: yes
+  systemd:
+    daemon_reload: true
+
+- name: configure | Manage elasticsearch services.
+  service:
+    name: elasticsearch
+    state: "{{ elasticsearch_service_status }}"
+    enabled: "{{ elasticsearch_service_enabled }}"
+
+- name: configure | Wait for elasticsearch to startup
+  wait_for: host={{ elasticsearch_http_host }} port={{ elasticsearch_http_port }} delay=10 connect_timeout=1
+  when: elasticsearch_service_status == 'started'
+
+- name: configure | Setup auto password.
+  shell: "{{ __elasticsearch_home }}/bin/elasticsearch-setup-passwords auto -b 2>&1 | tee {{ elasticsearch_conf_path }}/setup-passwords-output"
+  args:
+    creates: "{{ elasticsearch_conf_path }}/setup-passwords-output"
+  environment:
+    ES_PATH_CONF: "{{ elasticsearch_conf_path }}"
+    ES_INCLUDE: "{{ __elasticsearch_default_file }}"
+  run_once: yes
+  register: reg_setup_password
+  when: elasticsearch_xpack_enable | bool
+  
+- name: configure | Show passwords.
+  debug: msg={{ reg_setup_password.stdout.split('\n') }}
+  run_once: yes
+  when: 
+    - elasticsearch_xpack_enable | bool
+    - reg_setup_password.changed
