@@ -35,9 +35,9 @@ def get_log_data(data):
             try:
                 # {u'log_ssh': {u'failed_ssh': u' 1 192.168.31.160 2 192.168.31.162'}}
                 info = json.loads(stdout)
-                failed_ssh = info['log_ssh']['failed_ssh'].strip().encode(encoding='utf-8') # key与check_log.sh保持一致
+                failed_ssh = info['log_ssh']['failed_ssh'].strip().encode(encoding='utf-8')     # 此处和shell取值脚本参数一致
                 failed_ssh = '{' + failed_ssh + '}'
-                info = eval(failed_ssh)     # str变换成字典
+                info = eval(failed_ssh)
             except Exception as e:
                 item['error_item'][host] = {'msg': stdout}
                 continue
@@ -52,7 +52,6 @@ def get_log_data(data):
     item['time'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     # sorted
-    #
     item['failed_ssh_item'] = sorted(iteritems(item['failed_ssh_item']))
 
     return item
