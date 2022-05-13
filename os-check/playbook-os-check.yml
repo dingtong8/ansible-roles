@@ -1,7 +1,12 @@
+# 参考：https://www.cnblogs.com/guniang/p/13373388.html
+
 ---
-- name: 服务器巡检
+- name: 日志巡检
   hosts: server
   gather_facts: false
+  become: yes   # 提权执行命令
+  become_method: sudo   # 提权执行命令
+  become_user: root   # 提权执行命令
   vars:
    check_report_path: /tmp
    check_mail_host: "smtp.qq.com"
@@ -9,6 +14,6 @@
    check_mail_username: "2727250655@qq.com"
    check_mail_password: "xykvqvunpmuidfff"
    check_mail_to: ["dt@dyclub.org"]
-   playbook_name: "playbook-log-check.yml"
+   check_playbook_name: "playbook-log-check.yml"
   roles:
-   - os-check
+   - log-check
