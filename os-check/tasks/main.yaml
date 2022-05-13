@@ -9,11 +9,11 @@
   - name: Generate report file.
     template:
       src: report-cssinline.html
-      dest: "{{ check_report_path | d('/tmp') }}/report{{ check_report_file_suffix | d('') }}.html"
+      dest: "{{ check_report_path | d('/tmp') }}/os-check-report{{ check_report_file_suffix | d('') }}.html"
 
   - name: Get report file content.
     slurp:  # slurp 模块用于拉取远端文件的 base64 码
-      src: "{{ check_report_path | d('/tmp') }}/report{{ check_report_file_suffix | d('') }}.html"
+      src: "{{ check_report_path | d('/tmp') }}/os-check-report{{ check_report_file_suffix | d('') }}.html"
     register: report_data
 
   - name: Send a report by email.
