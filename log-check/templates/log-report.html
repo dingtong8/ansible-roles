@@ -3,9 +3,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>应用日志巡检报告</title>
+    <title>日志巡检-{{ data.time }}</title>
 </head>
 <body>
-{{ data }}
+<table border="1" width="100%">
+    <thead>
+    <tr>
+        <th>Server</th>
+        <th>Ssh Failed IP</th>
+        <th>Ssh Failed Count</th>
+    </tr>
+    </thead>
+    <tbody align="center">
+        {% for key, value in data.failed_ssh_item %}
+        <tr>
+            <td>{{key}}</td>
+            <td>
+            {% for i in value %}
+            {{i}}<br>
+            {% endfor %}
+            </td>
+            <td>
+            {% for j in value %}
+            {{value.get(j)}}<br>
+            {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
 </body>
 </html>

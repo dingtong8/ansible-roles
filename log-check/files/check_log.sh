@@ -6,10 +6,10 @@
 
 function check_log_ssh() {
   # 9463 127.0.0.1 6 192.168.31.203
-  log_failed_ssh=$(sudo cat `sudo find /var/log/ -name 'secure*' -newermt 2022-04-01 ! -newermt $(date -d next-day +%Y-%m-%d)` | awk '/Failed password/{print $(NF-3)}' | grep "^[0-9]" | sort | uniq -c | sort -nr | awk '{print $2":"$1}')
+  log_failed_ssh=$(sudo cat `sudo find /var/log/ -name 'secure*' -newermt 2022-04-01 ! -newermt $(date -d next-day +%Y-%m-%d)` | awk '/Failed password/{print $(NF-3)}' | grep "^[0-9]" | sort | uniq -c | sort -nr | awk '{print "'\''"$2"'\''"":""'\''"$1"'\''"","}')
 
   ssh_facts=$(
-    cat <<EOF
+  cat <<EOF
   {
     "failed_ssh": "${log_failed_ssh:-}"
   }
@@ -34,4 +34,3 @@ EOF
 
 
 main
-
