@@ -12,7 +12,7 @@ import json
 import datetime
 
 
-def get_log_data(data):
+def get_ssh_check_data(data):
     """
     Get the json data of check_result from hostvars and analyze it.
     :param data: hostvars
@@ -62,5 +62,5 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'get_log_data': get_log_data
+            'get_ssh_check_data': get_ssh_check_data
         }

@@ -7,8 +7,8 @@
    check_mail_host: "smtp.qq.com"
    check_mail_port: "465"
    check_mail_username: "2727250655@qq.com"
-   check_mail_password: "xykvqvunpmuidfff"
+   check_mail_password: "xykvqvun-------"
    check_mail_to: ["dt@dyclub.org"]
-   check_playbook_name: "playbook-log-check.yml"
+   check_playbook_name: "playbook-mysql-check.yml"
   roles:
-   - os-check
+   - mysql-check

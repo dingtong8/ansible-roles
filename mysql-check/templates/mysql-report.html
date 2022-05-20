@@ -1,9 +1,9 @@
-{% set data =  hostvars | get_log_data %}
+{% set data =  hostvars | get_mysql_check_data %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>日志巡检-{{ data.time }}</title>
+    <title>MySQL日志巡检-{{ data.time }}</title>
     <style>
         footer {
             display: block;
@@ -39,7 +39,7 @@
     </tr>
     </thead>
     <tbody align="center">
-        {% for key, value in data.failed_ssh_item %}
+        {% for key, value in data.failed_mysql_item %}
         <tr>
             <td>{{key}}</td>
             <td>

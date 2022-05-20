@@ -1,0 +1,14 @@
+---
+- name: 服务器巡检
+  hosts: server
+  gather_facts: false
+  vars:
+   check_report_path: /tmp
+   check_mail_host: "smtp.qq.com"
+   check_mail_port: "465"
+   check_mail_username: "2727250655@qq.com"
+   check_mail_password: "xykvqvunp------"
+   check_mail_to: ["dt@dyclub.org"]
+   check_playbook_name: "playbook-ssh-check.yml"
+  roles:
+   - ssh-check
