@@ -11,4 +11,4 @@ check_mail_password: ""
 check_mail_to: []
 check_playbook_name: ""
 check_day_mail: "{{ '%Y-%m-%d %H:%M:%S' | strftime }}"
-check_mail_subject: "[P0][OK][dy223 192.168.31.223][][{{ check_playbook_name }}] [{{ check_day_mail }}]"
+check_mail_subject: "[P0][OK][dy223 192.168.31.223][][{{ check_playbook_name }}][{{ check_day_mail }}]"
