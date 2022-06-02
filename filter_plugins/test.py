@@ -1,7 +1,15 @@
-a = {
-    "log_mysql": {
-        "failed_mysql": "'root@localhost':'71', 'dycsn@192.168.31.171':'10', 'dycsl@192.168.31.171':'10', 'root@192.168.31.173':'8', 'dycx@%':'7', 'root@192.168.31.222':'6', 'root@192.168.31.180':'6', 'ddyz@192.168.31.134':'6', 'dyxw@192.168.31.245':'4', 'dydpdataup@localhost':'4', 'dydata@192.168.31.134':'4', 'root@192.168.31.175':'3', 'dydata@192.168.31.160':'3', 'ddyz@192.168.31.111':'3', 'seafile@localhost':'2', 'root@dy223':'2', 'lzj@192.168.31.52':'2', 'dyxxx@%':'2', 'dydata@192.168.31.187':'2', 'dydata@192.168.31.186':'2', 'ddyz@192.168.31.160':'2', 'ddyz@192.168.31.159':'2', 'zabbix@localhost':'1', 'zabbix@192.168.31.222':'1', 'root@192.168.31.87':'1', 'root@192.168.31.5':'1', 'root@192.168.31.143':'1', 'root@192.168.31.106':'1', 'dyyz@localhost':'1', 'dyyz@%':'1', 'dytech@localhost':'1', 'dystu02@192.168.31.92':'1', 'dystu02@192.168.31.123':'1', 'dyhy@192.168.31.62':'1', 'dyhy@192.168.31.157':'1', 'dyhy@192.168.31.155':'1', 'dyhy@192.168.31.140':'1', 'dyhy@192.168.31.136':'1', 'dyhy@192.168.31.108':'1', 'dydata@192.168.31.67':'1', 'dydata01@localhost':'1', 'dycx@192.168.31.160':'1', 'dybdtongji@localhost':'1', '59.110.15.4@localhost':'1',"
-    }
+import json
+
+a = {'dir_virus_item': [(u'192.168.31.222', {u'opt_ls': u"'ptmx',",
+                                             u'tmp_ls': u"'hsperfdata_root', 'jruby-17977', 'jruby-22072', 'jruby-29212', 'jruby-951', 'syncthing.log',"}),
+                        (u'192.168.31.223', {u'opt_ls': u"'ptmx', 'shm', 'tty',",
+                                             u'tmp_ls': u"'mysql-report-2022-06-02.html', 'supervisord.log', 'syncthing.log', 'virus-report-2022-06-02.html',"})],
 }
-print type(a)
+
+for k, v in a.items():
+    for i in v:
+        for m, n in i[1].items():
+            for l in json.dumps(n):
+                print(l)
+
 

@@ -1,0 +1,66 @@
+{% set data =  hostvars | get_dir_virus_check_data %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>目录病毒巡检-{{ data.time }}</title>
+    <style>
+        footer {
+            display: block;
+        }
+        .footer .copyright {
+            padding: 0.9375rem;
+            background: white;
+        }
+        .footer .copyright p {
+            text-align: center;
+            margin: 0;
+            color: #898989;
+        }
+        .footer .copyright a {
+            color: #7571f9;
+        }
+        [data-theme-version="dark"] .footer .copyright {
+            background-color: #1b2b42;
+        }
+        [data-theme-version="dark"] .footer .copyright p {
+            color: #fff;
+        }
+    </style>
+</head>
+<div>
+<body>
+<table border="1" width="100%">
+    <thead>
+    <tr>
+        <th>Server</th>
+        <th>目录</th>
+        <th>具体内容</th>
+    </tr>
+    </thead>
+    <tbody align="center">
+        {% for key, value in data.dir_virus_item %}
+        <tr>
+            <td>{{key}}</td>
+            <td>
+            {% for i in value %}
+            {{i}}<br>
+            {% endfor %}
+            </td>
+            <td>
+            {% for j in value %}
+            {{value.get(j)}}<br>
+            {% endfor %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+</body>
+</div>
+<div class="footer">
+    <div class="copyright">
+        <p>Copyright &copy;2022 Developed by dt </p>
+    </div>
+</div>
+</html>
